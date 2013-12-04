@@ -1,6 +1,14 @@
 sbi
 ===
 
+.. image:: https://travis-ci.org/vinta/sbi.py.png?branch=master
+    :alt: Build Badge
+    :target: https://travis-ci.org/vinta/sbi.py
+
+.. image:: https://coveralls.io/repos/vinta/sbi.py/badge.png?branch=master
+    :alt: Coverage Badge
+    :target: https://coveralls.io/r/vinta/sbi.py?branch=master
+
 .. image:: https://badge.fury.io/py/sbi.png
     :alt: Version Badge
     :target: http://badge.fury.io/py/sbi
@@ -9,7 +17,7 @@ sbi
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
 
-Python wrapper for Google Search By Image.
+Dead simple Python wrapper for `Google Search By Image <http://www.google.com/insidesearch/features/images/searchbyimage.html>`_
 
 Installation
 ============
