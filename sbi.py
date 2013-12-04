@@ -45,6 +45,12 @@ def make_request(url):
     return content
 
 
+def cook_soup(text):
+    soup = BeautifulSoup(text)
+
+    return soup
+
+
 def extract_best_guess(html):
     match = re.search(b'Best guess for this image.*?>(.*?)</a>', html, re.M)
     text = match.group(1).decode()
@@ -72,7 +78,7 @@ def search_by(url=None, file=None):
     result.result_page = result_url
     result.best_guess = extract_best_guess(result_html)
 
-    soup = BeautifulSoup(result_html)
+    soup = cook_soup(result_html)
 
     all_sizes_a_tag = soup.find('a', text='All sizes')
 
@@ -91,7 +97,7 @@ def search_by(url=None, file=None):
 
     all_sizes_html = make_request(all_sizes_url)
 
-    soup = BeautifulSoup(all_sizes_html)
+    soup = cook_soup(all_sizes_html)
 
     img_links =  soup.find_all('a', {'class': 'rg_l'})
     images = []

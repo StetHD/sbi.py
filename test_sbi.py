@@ -31,7 +31,7 @@ class SBITestCase(unittest.TestCase):
         result = sbi.search_by(url=url)
 
         result_dict = result.to_dict()
-        self.assertIsInstance(result_dict, dict)
+        self.assertTrue(isinstance(result_dict, dict))
 
 
 if __name__ == '__main__':
