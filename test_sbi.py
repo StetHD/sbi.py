@@ -13,8 +13,8 @@ class SBITestCase(unittest.TestCase):
     def test_repr(self):
         empty_result = sbi.SBIResult()
 
-        self.assertIn('SBIResult', repr(empty_result))
-        self.assertIn('SBIResult', str(empty_result))
+        self.assertTrue('SBIResult' in repr(empty_result))
+        self.assertTrue('SBIResult' in str(empty_result))
 
     def test_normal(self):
         url = 'http://vinta.s3.amazonaws.com/godness_k.jpg'
