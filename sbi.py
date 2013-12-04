@@ -63,10 +63,11 @@ def cook_soup(text):
 
 
 def extract_best_guess(html):
-    match = re.search(b'Best guess for this image.*?>(.*?)</a>', html, re.M)
+    match = re.search(b'Best guess for this image.*?>(.*?)</a>', html, re.IGNORECASE | re.MULTILINE)
 
     if match:
-        text = match.group(1).decode().title()
+        text = match.group(1)
+        text = text.title()
     else:
         text = ''
 
