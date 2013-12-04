@@ -22,8 +22,8 @@ install_requires = list(filter(None, requirements_lines))
 
 setup(
     name='sbi',
-    version='0.0.3',
-    description='A Python wrapper for Google Search By Image',
+    version='0.0.4',
+    description='Dead simple Python wrapper for Google Search By Image',
     long_description=long_description,
     keywords='google image search web content scraper parser crawler',
     author='Vinta Chen',
@@ -33,6 +33,7 @@ setup(
     install_requires=install_requires,
     include_package_data=True,
     py_modules=['sbi', ],
+    test_suite='test_sbi',
     zip_safe=False,
     classifiers=(
         'Development Status :: 3 - Alpha',
@@ -44,7 +45,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Multimedia :: Graphics',
