@@ -5,9 +5,9 @@ sbi
     :alt: Build Badge
     :target: https://travis-ci.org/vinta/sbi.py
 
-.. image:: https://coveralls.io/repos/vinta/sbi.py/badge.png?branch=master
+.. image:: https://coveralls.io/repos/vinta/sbi.py/badge.png
     :alt: Coverage Badge
-    :target: https://coveralls.io/r/vinta/sbi.py?branch=master
+    :target: https://coveralls.io/r/vinta/sbi.py
 
 .. image:: https://badge.fury.io/py/sbi.png
     :alt: Version Badge

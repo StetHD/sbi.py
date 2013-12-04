@@ -13,7 +13,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-long_description = open('README.rst').read()
+long_description = open('README.rst').read() + '\n\n' + open('HISTORY.rst').read()
 
 license = open('LICENSE').read()
 
