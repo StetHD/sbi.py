@@ -98,3 +98,6 @@ def search_by(url=None, file=None):
     result.images = images
 
     return result
+
+
+__all__ = ['search_by', ]

@@ -1,5 +1,13 @@
-sbi 傻逼我
-=========
+sbi
+===
+
+.. image:: https://badge.fury.io/py/sbi.png
+    :alt: Version Badge
+    :target: http://badge.fury.io/py/sbi
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/vinta/sbi.py/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
 
 Python wrapper for Google Search By Image.
 
@@ -61,9 +69,3 @@ If you prefer dictionary:
 .. code-block:: python
 
     result_dict = result.to_dict()
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/vinta/sbi.py/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-
