@@ -14,7 +14,9 @@ class SBITestCase(unittest.TestCase):
         url = 'http://vinta.s3.amazonaws.com/godness_k.jpg'
         result = sbi.search_by(url=url)
 
+        self.assertTrue(result)
         self.assertTrue(len(result.images) > 0)
+        self.assertEqual(len(result), len(result.images))
 
     def test_no_other_sizes(self):
         """
@@ -24,10 +26,11 @@ class SBITestCase(unittest.TestCase):
         url = 'http://files.heelsfetishism.com/media/heels/2013/12/04/23823_5fbbba44bf474496a9b01dfebfb5d135.png.1440x0_q85_progressive.png'
         result = sbi.search_by(url=url)
 
+        self.assertFalse(result)
         self.assertTrue(len(result.images) == 0)
 
     def test_to_dict(self):
-        url = 'http://vinta.s3.amazonaws.com/godness_k.jpg'
+        url = 'http://vinta.s3.amazonaws.com/godness_k_2.jpg'
         result = sbi.search_by(url=url)
 
         result_dict = result.to_dict()
