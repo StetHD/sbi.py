@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import requests
 
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 __all__ = ['search_by', 'SBIResult']
 
 
@@ -23,6 +23,17 @@ class SBIResult(object):
         self.all_sizes_page = None
         self.best_guess = None
         self.images = []
+
+    def __bool__(self):
+        return bool(self.images)
+
+    __nonzero__ = __bool__
+
+    def __len__(self):
+        return len(self.images)
+
+    def __repr__(self):
+        return '<SBIResult [best_guess: %s]>' % (self.best_guess)
 
     def to_dict(self):
         return self.__dict__
@@ -53,9 +64,13 @@ def cook_soup(text):
 
 def extract_best_guess(html):
     match = re.search(b'Best guess for this image.*?>(.*?)</a>', html, re.M)
-    text = match.group(1).decode()
 
-    return text.title()
+    if match:
+        text = match.group(1).decode().title()
+    else:
+        text = ''
+
+    return text
 
 
 def search_by(url=None, file=None):

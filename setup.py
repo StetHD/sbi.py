@@ -22,7 +22,7 @@ install_requires = list(filter(None, requirements_lines))
 
 setup(
     name='sbi',
-    version='0.0.4',
+    version='0.0.5',
     description='Dead simple Python wrapper for Google Search By Image',
     long_description=long_description,
     keywords='google image search web content scraper parser crawler',
