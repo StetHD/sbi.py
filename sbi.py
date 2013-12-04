@@ -1,10 +1,19 @@
 # coding: utf-8
 
 import re
-import urlparse
+
+# Python 3 compatibility
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 from bs4 import BeautifulSoup
 import requests
+
+
+__version__ = '0.0.4'
+__all__ = ['search_by', 'SBIResult']
 
 
 class SBIResult(object):
@@ -66,6 +75,11 @@ def search_by(url=None, file=None):
     soup = BeautifulSoup(result_html)
 
     all_sizes_a_tag = soup.find('a', text='All sizes')
+
+    # No other sizes of this image found
+    if not all_sizes_a_tag:
+        return result
+
     all_sizes_href = all_sizes_a_tag['href']
     all_sizes_url = urlparse.urljoin(GOOGLE_BASE_URL, all_sizes_href)
 
@@ -98,6 +112,3 @@ def search_by(url=None, file=None):
     result.images = images
 
     return result
-
-
-__all__ = ['search_by', ]
