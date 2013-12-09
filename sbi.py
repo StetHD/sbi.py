@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import random
 import re
 
 # Python 3 compatibility
@@ -12,8 +13,14 @@ from bs4 import BeautifulSoup
 import requests
 
 
-__version__ = '0.0.5'
-__all__ = ['search_by', 'SBIResult']
+__version__ = '0.0.7'
+__all__ = ['search_by', 'SBIResult', 'OhShitCAPTCHA']
+
+
+class OhShitCAPTCHA(Exception):
+    """
+    Google: You Shall Not Pass!!!
+    """
 
 
 class SBIResult(object):
@@ -39,18 +46,37 @@ class SBIResult(object):
         return self.__dict__
 
 
-HEADERS = {
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
-    'origin': 'http://www.google.com/',
-    'referer': 'https://www.google.com/',
-}
+# from: http://techblog.willshouse.com/2012/01/03/most-common-user-agents/
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0',
+    'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
+]
 
 GOOGLE_BASE_URL = 'http://www.google.com/'
 GOOGLE_SEARCH_BY_ENDPOINT = 'http://images.google.com/searchbyimage?hl=en&image_url='
 
 
-def make_request(url):
-    r = requests.get(url, headers=HEADERS)
+def fire_request(url, referer):
+    headers = {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'accept-encoding': 'gzip,deflate,sdch',
+        'accept-language': 'en-US,en;q=0.8,zh-TW;q=0.6,zh;q=0.4',
+        'cache-control': 'no-cache',
+        'pragma': 'no-cache',
+        'referer': referer,
+        'user-agent': random.choice(USER_AGENTS),
+    }
+
+    r = requests.get(url, headers=headers)
+
     content = r.content
 
     return content
@@ -58,6 +84,10 @@ def make_request(url):
 
 def cook_soup(text):
     soup = BeautifulSoup(text)
+
+    captcha_input = soup.find_all('input', {'name': 'captcha'})
+    if captcha_input:
+        raise OhShitCAPTCHA
 
     return soup
 
@@ -88,7 +118,8 @@ def search_by(url=None, file=None):
 
     result_url = GOOGLE_SEARCH_BY_ENDPOINT + image_url
 
-    result_html = make_request(result_url)
+    referer = 'http://www.google.com/imghp'
+    result_html = fire_request(result_url, referer)
 
     result = SBIResult()
     result.result_page = result_url
@@ -111,7 +142,7 @@ def search_by(url=None, file=None):
     All sizes page
     """
 
-    all_sizes_html = make_request(all_sizes_url)
+    all_sizes_html = fire_request(all_sizes_url, referer=all_sizes_url)
 
     soup = cook_soup(all_sizes_html)
 
@@ -126,8 +157,8 @@ def search_by(url=None, file=None):
 
         image = {}
         image['url'] = querystring_dict['imgurl'][0]
-        image['width'] = querystring_dict['w'][0]
-        image['height'] = querystring_dict['h'][0]
+        image['width'] = int(querystring_dict['w'][0])
+        image['height'] = int(querystring_dict['h'][0])
 
         images.append(image)
 

@@ -1,11 +1,22 @@
 History
 =======
 
+0.0.7 (NOT YET)
+++++++++++++++++++
+
+- Add `OhShitCAPTCHA` exception
+- Random user-agent
+
+0.0.6 (2013-12-07)
+++++++++++++++++++
+
+- Six is good
+
 0.0.5 (2013-12-05)
 ++++++++++++++++++
 
 - SBIResult improvement
-- fix extract_best_guess()
+- Fix `extract_best_guess()`
 
 0.0.4 (2013-12-05)
 ++++++++++++++++++
