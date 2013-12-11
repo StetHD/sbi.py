@@ -1,11 +1,12 @@
 History
 =======
 
-0.0.7 (NOT YET)
+0.0.7 (2013-12-12)
 ++++++++++++++++++
 
 - Add `OhShitCAPTCHA` exception
 - Random user-agent
+- New headers settings
 
 0.0.6 (2013-12-07)
 ++++++++++++++++++

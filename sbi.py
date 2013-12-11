@@ -112,7 +112,7 @@ def search_by(url=None, file=None):
     """
 
     image_url = url
-    image_file = file
+    # image_file = file
 
     """
     Search result page
