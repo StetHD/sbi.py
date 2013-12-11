@@ -66,13 +66,15 @@ GOOGLE_SEARCH_BY_ENDPOINT = 'http://images.google.com/searchbyimage?hl=en&image_
 
 def fire_request(url, referer):
     headers = {
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'accept-encoding': 'gzip,deflate,sdch',
-        'accept-language': 'en-US,en;q=0.8,zh-TW;q=0.6,zh;q=0.4',
-        'cache-control': 'no-cache',
-        'pragma': 'no-cache',
-        'referer': referer,
-        'user-agent': random.choice(USER_AGENTS),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Encoding': 'gzip,deflate',
+        'Accept-Language': 'en-US,en;q=0.8,zh-TW;q=0.6,zh;q=0.4',
+        'Cache-Control': 'no-cache',
+        'Connection': 'close',
+        'DNT': '1',
+        'Pragma': 'no-cache',
+        'Referer': referer,
+        'User-Agent': random.choice(USER_AGENTS),
     }
 
     r = requests.get(url, headers=headers)
