@@ -25,7 +25,7 @@ setup(
     version='0.0.7',
     description='Dead simple Python wrapper for Google Search By Image',
     long_description=long_description,
-    keywords='google image search web content scraper parser crawler',
+    keywords='google reverse image search web content scraper parser crawler',
     author='Vinta Chen',
     author_email='vinta.chen@gmail.com',
     url='https://github.com/vinta/sbi.py',

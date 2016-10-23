@@ -3,24 +3,30 @@
 import random
 import re
 
+from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
+from user_agent import generate_user_agent
+import requests
+
 # Python 3 compatibility
 try:
     import urlparse
 except ImportError:
     import urllib.parse as urlparse
 
-from bs4 import BeautifulSoup
-import requests
-
 
 __version__ = '0.0.7'
 __all__ = ['search_by', 'SBIResult', 'OhShitCAPTCHA']
+
+GOOGLE_BASE_URL = 'https://www.google.com/'
+GOOGLE_SEARCH_BY_ENDPOINT = 'https://images.google.com/searchbyimage?hl=en&image_url='
 
 
 class OhShitCAPTCHA(Exception):
     """
     Google: You Shall Not Pass!!!
     """
+    pass
 
 
 class SBIResult(object):
@@ -40,52 +46,39 @@ class SBIResult(object):
         return len(self.images)
 
     def __repr__(self):
+        # print('self.result_page', self.result_page)
+        # print('self.all_sizes_page', self.all_sizes_page)
         return '<SBIResult [best_guess: %s]>' % (self.best_guess)
 
     def to_dict(self):
         return self.__dict__
 
 
-# from: http://techblog.willshouse.com/2012/01/03/most-common-user-agents/
-USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0',
-    'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
-]
-
-GOOGLE_BASE_URL = 'http://www.google.com/'
-GOOGLE_SEARCH_BY_ENDPOINT = 'http://images.google.com/searchbyimage?hl=en&image_url='
-
-
 def fire_request(url, referer):
     headers = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Encoding': 'gzip,deflate',
-        'Accept-Language': 'en-US,en;q=0.8,zh-TW;q=0.6,zh;q=0.4',
-        'Cache-Control': 'no-cache',
-        'Connection': 'close',
-        'DNT': '1',
-        'Pragma': 'no-cache',
-        'Referer': referer,
-        'User-Agent': random.choice(USER_AGENTS),
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'accept-encoding': 'gzip, deflate, sdch',
+        'accept-language': 'en-us,en;q=0.8,zh-tw;q=0.6,zh;q=0.4',
+        'cache-control': 'no-cache',
+        'connection': 'close',
+        'dnt': '1',
+        'pragma': 'no-cache',
+        'referer': referer,
+        'user-agent': generate_user_agent(),
     }
 
     r = requests.get(url, headers=headers)
 
     content = r.content
 
+    # print('r.url', r.url)
+    print('r.status_code', r.status_code)
+
     return content
 
 
 def cook_soup(text):
-    soup = BeautifulSoup(text)
+    soup = BeautifulSoup(text, 'html5lib')
 
     captcha_input = soup.find_all('input', {'name': 'captcha'})
     if captcha_input:
@@ -106,22 +99,16 @@ def extract_best_guess(html):
     return text
 
 
-def search_by(url=None, file=None):
-    """
-    TODO: support file
-    """
-
+def search_by(url=None):
     image_url = url
-    # image_file = file
-
-    """
-    Search result page
-    """
 
     result_url = GOOGLE_SEARCH_BY_ENDPOINT + image_url
 
-    referer = 'http://www.google.com/imghp'
+    referer = 'https://www.google.com/imghp'
     result_html = fire_request(result_url, referer)
+
+    if 'Find other sizes of this image' not in result_html:
+        print(result_html)
 
     result = SBIResult()
     result.result_page = result_url
@@ -140,15 +127,11 @@ def search_by(url=None, file=None):
 
     result.all_sizes_page = all_sizes_url
 
-    """
-    All sizes page
-    """
-
     all_sizes_html = fire_request(all_sizes_url, referer=all_sizes_url)
 
     soup = cook_soup(all_sizes_html)
 
-    img_links =  soup.find_all('a', {'class': 'rg_l'})
+    img_links = soup.find_all('a', {'class': 'rg_l'})
     images = []
     for a in img_links:
         url = a['href']
@@ -167,3 +150,9 @@ def search_by(url=None, file=None):
     result.images = images
 
     return result
+
+
+from pprint import pprint
+result = search_by("https://s3-ap-northeast-1.amazonaws.com/vinta/test/kiko_mizuhara_1.jpg")
+pprint(result)
+pprint(result.images)
